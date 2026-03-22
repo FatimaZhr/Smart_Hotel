@@ -3,15 +3,16 @@ package com.SmartHotel.SmartHotel.Enteties;
 import com.SmartHotel.SmartHotel.Enums.RoomStatus;
 import com.SmartHotel.SmartHotel.Enums.RoomType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "rooms")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Room {
 
-    // Getters & Setters
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,17 +21,15 @@ public class Room {
     private String roomNumber;
 
     private Integer floor;
-
     @Enumerated(EnumType.STRING)
     private RoomType type;
 
-    @Setter
-    @Getter
     @Enumerated(EnumType.STRING)
     private RoomStatus status;
 
     private Double basePrice;
     private Boolean hasIot;
+
 
     // Methods
     public Boolean isAvailable() {
@@ -40,5 +39,6 @@ public class Room {
     public Double getPrice() {
         return this.basePrice;
     }
+
 
 }

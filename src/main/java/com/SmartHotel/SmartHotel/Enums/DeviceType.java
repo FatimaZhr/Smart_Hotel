@@ -6,5 +6,5 @@ public enum DeviceType {
     LIGHT,
     AC,
     TV,
-    CURTAIN
+    TEMPERATURE, CURTAIN
 }

@@ -18,6 +18,7 @@ public class User {
 
     private String fullName;
 
+    @Getter
     @Column(unique = true, nullable = false)
     private String email;
 

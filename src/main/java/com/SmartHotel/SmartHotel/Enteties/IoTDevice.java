@@ -2,11 +2,14 @@ package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.DeviceType;
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+@Data
+@Builder
 @Entity
 @Table(name = "iot_devices")
 public class IoTDevice {

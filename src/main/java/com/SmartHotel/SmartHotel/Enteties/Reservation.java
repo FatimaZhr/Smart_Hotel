@@ -2,11 +2,12 @@ package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.ReservStatus;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-
+@Data
 @Entity
 @Table(name = "reservations")
 public class Reservation {
@@ -21,6 +22,7 @@ public class Reservation {
     @JoinColumn(name = "guest_id")
     private User guest;
 
+    @Getter
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
@@ -51,5 +53,6 @@ public class Reservation {
     public void checkOut() {
         this.status = ReservStatus.CHECKED_OUT;
     }
+
 
 }

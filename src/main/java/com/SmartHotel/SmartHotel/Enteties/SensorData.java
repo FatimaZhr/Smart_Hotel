@@ -2,10 +2,11 @@ package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.SensorType;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-
+@Data
 @Entity
 @Table(name = "sensor_data")
 public class SensorData {
