@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Hotel — Rooms</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}"/>
+    <style>
+        .main-layout { display: flex; height: calc(100vh - 57px); }
+
+        /* LEFT */
+        .left-panel {
+            width: 260px;
+            min-width: 260px;
+            height:100%;
+            background: #fff;
+            border-right: 1px solid var(--border);
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+             min-height: 100%;        /* ← هاد */
+             overflow-y: auto;
+        }
+        .left-title { font-size: 18px; font-weight: 800; color: var(--text); }
+        .left-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text);
+            padding: 6px 0;
+        }
+        .feature-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--primary-light);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+
+        .stats-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .stats-box-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .stats-row { display: flex; justify-content: space-between; }
+        .stat-item { text-align: center; }
+        .stat-num { font-size: 22px; font-weight: 800; }
+        .stat-lbl { font-size: 10px; color: var(--text-muted); }
+
+        /* RIGHT */
+        .right-panel { flex: 1; overflow-y: auto; padding: 28px; }
+
+        /* ROOM CARD */
+   .room-card {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 4px #0000000a;
+    transition: all 0.2s;
+    min-height: 200px;
+    width:700px;
+}
+        .room-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px #2563eb15;
+        }
+        .room-img {
+    width: 260px;
+    min-width: 260px;
+    height: 200px;
+    object-fit: cover;
+}
+   .room-img-placeholder {
+    width: 260px;
+    min-width: 260px;
+    height: 200px;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+        .room-info {
+            flex: 1; padding: 16px 20px;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+        }
+        .room-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .room-number { font-size: 17px; font-weight: 800; color: var(--text); }
+        .room-type   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .room-price  { font-size: 15px; font-weight: 700; color: var(--primary); margin-top: 6px; }
+        .stars { font-size: 16px; }
+.rating-value {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+     #filterType{
+          background-color:#085d94;
+          border-radius:5px;
+          margin-left:18px;
+        }
+     #filterStatus{
+          background-color:#085d94;
+          border-radius:5px;
+          margin-left:50px;
+        }
+
+    </style>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">🏨 Smart Hotel</a>
+    <div class="nav-links">
+        <a href="/rooms" class="active">Rooms</a>
+        <a href="/reservations">Reservations</a>
+        <a href="/logout">Log out</a>
+    </div>
+</nav>
+
+<div class="main-layout">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+        <div>
+            <div class="left-title">🏨 Our Rooms</div>
+            <div class="left-desc" style="margin-top:8px;">
+                Discover our comfortable rooms designed
+                for a perfect stay in Agadir.
+            </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:4px;">
+            <div class="feature-item"><div class="feature-icon">📶</div>Free WiFi</div>
+            <div class="feature-item"><div class="feature-icon">❄️</div>Air Conditioning</div>
+            <div class="feature-item"><div class="feature-icon">🔑</div>Mobile Key Access</div>
+            <div class="feature-item"><div class="feature-icon">🌡️</div>Smart Room Control</div>
+            <div class="feature-item"><div class="feature-icon">🍳</div>Breakfast Included</div>
+            <div class="feature-item"><div class="feature-icon">🏊</div>Pool Access</div>
+
+            <!-- FILTER SECTION -->
+            <hr style="height:4px;background-color: #073f72">
+
+            <div class="filter-box">
+                <div class="filter-title">🔍 Filter Rooms</div>
+
+                <!-- Type -->
+                <div class="filter-group">
+                    <label class="filter-label">Room Type</label>
+                    <select id="filterType" class="filter-select" onchange="applyFilters()">
+                        <option value="">All Types</option>
+                        <option value="SINGLE">Single</option>
+                        <option value="DOUBLE">Double</option>
+                        <option value="SUITE">Suite</option>
+                        <option value="FAMILY">Family</option>
+                    </select>
+                </div>
+   <br>
+                <!-- Status -->
+                <div class="filter-group">
+                    <label class="filter-label">Status   </label>
+                    <select id="filterStatus" class="filter-select" onchange="applyFilters()">
+                        <option value="">All</option>
+                        <option value="AVAILABLE">Available</option>
+                        <option value="OCCUPIED">Occupied</option>
+                    </select>
+                </div>
+<br>
+                <!-- Prix -->
+                <div class="filter-group">
+                    <label class="filter-label">Max Price (MAD)</label>
+                    <input type="range" id="filterPrice"
+                           min="0" max="2000" value="2000"
+                           oninput="updatePrice(this.value)"
+                           style="width:100%; accent-color: #073f72;"/>
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                        <span>0</span>
+                        <span id="priceLabel" style="color:#073f72; font-weight:700;">2000 MAD</span>
+                        <span>2000</span>
+                    </div>
+                </div>
+<br>
+                <!-- Rating -->
+                <div class="filter-group">
+                    <label class="filter-label">Min Rating</label>
+                    <select id="filterRating" class="filter-select" onchange="applyFilters()">
+                        <option value="0">All Ratings</option>
+                        <option value="3">3+ ⭐</option>
+                        <option value="4">4+ ⭐</option>
+                        <option value="4.5">4.5+ ⭐</option>
+                    </select>
+                </div>
+<br>
+                <!-- Reset -->
+                <button onclick="resetFilters()" class="btn btn-secondary"
+                        style="width:100%; margin-top:4px;">
+                    Reset Filters
+                </button>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-box">
+            <div class="stats-box-title">Quick Stats</div>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-num" style="color:var(--success);"
+                         th:text="${availableCount}">0</div>
+                    <div class="stat-lbl">Available</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" style="color:var(--danger);"
+                         th:text="${occupiedCount}">0</div>
+                    <div class="stat-lbl">Occupied</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" style="color:var(--primary);"
+                         th:text="${totalCount}">0</div>
+                    <div class="stat-lbl">Total</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+        <div class="page-title">Available Rooms</div>
+
+        <div th:each="room : ${rooms}">
+            <div class="room-card"
+                 th:data-type="${room.type}"
+                 th:data-status="${room.status}"
+                 th:data-price="${room.basePrice}"
+                 th:data-rating="${room.rating != null ? room.rating : 0}">
+
+                <!-- IMAGE -->
+                <img class="room-img"
+                     th:if="${room.imageUrl != null}"
+                     th:src="${room.imageUrl}" alt="Room"/>
+                <div class="room-img-placeholder"
+                     th:if="${room.imageUrl == null}">🛏️</div>
+
+                <!-- INFO -->
+                <div class="room-info">
+                    <div>
+                        <div class="room-top">
+                            <div>
+                                <div class="room-number" th:text="'Room ' + ${room.roomNumber}"></div>
+                                <div class="room-type" th:text="${room.type}"></div>
+
+                                <div th:switch="${room.status.name()}" style="margin-top:6px;">
+                                    <span class="badge badge-available" th:case="'AVAILABLE'">Available</span>
+                                    <span class="badge badge-occupied" th:case="'OCCUPIED'">Occupied</span>
+                                </div>
+                            </div>
+
+                            <div class="room-rating" th:if="${room.rating != null}">
+                                <span class="stars" th:data-rating="${room.rating}"></span>
+                                <span class="rating-value" th:text="${room.rating} + ' / 5'"></span>
+                            </div>
+                        </div>
+                        <div class="room-price"
+                             th:text="${room.basePrice} + ' MAD / night'"></div>
+                    </div>
+
+                    <!-- BUTTON -->
+                    <div>
+                        <a th:if="${room.status.name() == 'AVAILABLE'}"
+                           th:href="@{/reservations/new(roomId=${room.id})}"
+                           class="btn btn-primary">
+                            Book Now
+                        </a>
+                        <a th:if="${room.hasIot}"
+                           th:href="@{/iot/rooms/{id}(id=${room.id})}"
+                           class="btn btn-secondary"
+                           style="margin-top:6px;">
+                            ⚙️ Control Room
+                        </a>
+                        <span th:if="${room.status.name() != 'AVAILABLE'}"
+                              class="btn btn-secondary">
+                            Not Available
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- EMPTY -->
+        <div class="empty-state" th:if="${#lists.isEmpty(rooms)}">
+            <div class="empty-state-icon">🛏️</div>
+            <div>No rooms found</div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // نجوم
+    document.querySelectorAll('.stars').forEach(el => {
+        const rating = parseFloat(el.dataset.rating);
+        const full   = Math.floor(rating);
+        const half   = rating % 1 >= 0.5;
+        const empty  = 5 - full - (half ? 1 : 0);
+        const star   = `<span style="color:#facc15;">★</span>`;
+        const halfS  = `<span style="color:#facc15; font-size:12px;">½</span>`;
+        const emptyS = `<span style="color:#d1d5db;">★</span>`;
+        el.innerHTML = star.repeat(full) + (half ? halfS : '') + emptyS.repeat(empty);
+    });
+
+    // Filter
+    function applyFilters() {
+        const type   = document.getElementById('filterType').value;
+        const status = document.getElementById('filterStatus').value;
+        const price  = parseFloat(document.getElementById('filterPrice').value);
+        const rating = parseFloat(document.getElementById('filterRating').value);
+
+        document.querySelectorAll('.room-card').forEach(card => {
+            const cardType   = card.dataset.type;
+            const cardStatus = card.dataset.status;
+            const cardPrice  = parseFloat(card.dataset.price);
+            const cardRating = parseFloat(card.dataset.rating);
+
+            const show =
+                (!type   || cardType === type) &&
+                (!status || cardStatus === status) &&
+                (cardPrice  <= price) &&
+                (cardRating >= rating);
+
+            card.parentElement.style.display = show ? '' : 'none';
+        });
+    }
+
+    function updatePrice(val) {
+        document.getElementById('priceLabel').textContent = val + ' MAD';
+        applyFilters();
+    }
+
+    function resetFilters() {
+        document.getElementById('filterType').value   = '';
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterPrice').value  = 2000;
+        document.getElementById('filterRating').value = 0;
+        document.getElementById('priceLabel').textContent = '2000 MAD';
+        applyFilters();
+    }
+</script>
+
+</body>
+</html>

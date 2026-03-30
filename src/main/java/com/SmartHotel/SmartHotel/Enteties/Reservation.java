@@ -2,13 +2,14 @@ package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.ReservStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 @Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "reservations")
 public class Reservation {
 

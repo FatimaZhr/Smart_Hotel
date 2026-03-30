@@ -1,0 +1,46 @@
+/* HEADER */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.header-stats { display: flex; gap: 10px; }
+
+/* GUEST INFO */
+.guest-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+.guest-email {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* ROOM */
+.room-badge {
+    font-size: 13px;
+    font-weight: 700;
+    color: #073f72;
+}
+.room-type {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* PRICE */
+.price-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* ACTIONS */
+.action-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}

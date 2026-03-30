@@ -1,16 +1,18 @@
 package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.DeviceType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 @Data
 @Builder
 @Entity
+@AllArgsConstructor
+@JsonIgnoreProperties("devices")
+@NoArgsConstructor
 @Table(name = "iot_devices")
 public class IoTDevice {
 

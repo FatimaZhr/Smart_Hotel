@@ -2,15 +2,19 @@ package com.SmartHotel.SmartHotel.Enteties;
 
 import com.SmartHotel.SmartHotel.Enums.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+
+@Data
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
 
-    // Getters & Setters
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

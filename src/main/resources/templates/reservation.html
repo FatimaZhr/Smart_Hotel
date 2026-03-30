@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Hotel — Reservation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/reservation.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">🏨 Smart Hotel</a>
+    <div class="nav-links">
+        <a href="/rooms">Rooms</a>
+        <a href="/reservations">Reservations</a>
+        <a href="/login">Log out</a>
+    </div>
+</nav>
+
+<div class="main-container">
+
+    <!-- LEFT — معلومات الغرفة -->
+    <div class="left-panel">
+
+        <div class="room-preview">
+            <img class="room-img"
+                 th:if="${room.imageUrl != null}"
+                 th:src="${room.imageUrl}"
+                 alt="Room"/>
+            <div class="room-img-placeholder"
+                 th:if="${room.imageUrl == null}">🛏️</div>
+
+            <div class="room-preview-info">
+                <div class="room-number"
+                     th:text="'Room ' + ${room.roomNumber}">
+                </div>
+                <div class="room-type"
+                     th:text="${room.type}">
+                </div>
+                <div class="room-price"
+                     th:text="${room.basePrice} + ' MAD / night'">
+                </div>
+            </div>
+        </div>
+
+        <!-- مزايا الغرفة -->
+        <div class="amenities">
+            <div class="amenities-title">Room Amenities</div>
+            <div class="amenity-item"><span>📶</span> Free WiFi</div>
+            <div class="amenity-item"><span>❄️</span> Air Conditioning</div>
+            <div class="amenity-item"><span>🔑</span> Mobile Key Access</div>
+            <div class="amenity-item"><span>🌡️</span> Smart Room Control</div>
+            <div class="amenity-item"><span>📺</span> Smart TV</div>
+        </div>
+
+    </div>
+
+
+    <div class="right-panel">
+        <div class="form-title">📋 Book Your Room</div>
+
+        <!-- Error -->
+        <div class="alert-error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/reservations/confirm}" method="post">
+
+            <!-- roomId مخفي -->
+            <input type="hidden" name="roomId" th:value="${room.id}"/>
+
+            <!-- Check-in -->
+            <div class="form-group">
+                <label class="form-label">Check-in Date</label>
+                <input type="date"
+                       name="checkInDate"
+                       class="form-input"
+                       required/>
+            </div>
+
+            <!-- Check-out -->
+            <div class="form-group">
+                <label class="form-label">Check-out Date</label>
+                <input type="date"
+                       name="checkOutDate"
+                       class="form-input"
+                       required/>
+            </div>
+
+            <!-- Summary -->
+            <div class="summary-box">
+                <div class="summary-title">Booking Summary</div>
+                <div class="summary-row">
+                    <span class="summary-label">Room</span>
+                    <span class="summary-value"
+                          th:text="'Room ' + ${room.roomNumber}"></span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Type</span>
+                    <span class="summary-value"
+                          th:text="${room.type}"></span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Price / night</span>
+                    <span class="summary-value"
+                          th:text="${room.basePrice} + ' MAD'"></span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group">
+                <a href="/rooms" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-confirm">
+                    Confirm Booking ✓
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+</body>
+</html>

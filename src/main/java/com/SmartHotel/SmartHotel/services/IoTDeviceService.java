@@ -23,7 +23,11 @@ public class IoTDeviceService {
     public IoTDevice saveDevice(IoTDevice device) {
         return iotDeviceRepository.save(device);
     }
-
+    public List<IoTDevice> getDevicesByRoomId(Long roomId) {
+        Room room = new Room();
+        room.setId(roomId);
+        return iotDeviceRepository.findByRoom(room);
+    }
 
     public IoTDevice sendCommand(Long deviceId, String command) {
         IoTDevice device = iotDeviceRepository
@@ -35,5 +39,8 @@ public class IoTDeviceService {
         }
         device.sendCommand(command);
         return iotDeviceRepository.save(device);
+    }
+    public List<IoTDevice> getAllDevices() {
+        return iotDeviceRepository.findAll();
     }
 }

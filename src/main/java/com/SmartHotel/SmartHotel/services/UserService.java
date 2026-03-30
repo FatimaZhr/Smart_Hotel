@@ -26,4 +26,15 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
+    public User findByEmail (String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+    public User updateUser(Long id, User user) {
+        if (userRepository.existsById(id)) {
+            userRepository.save(user);
+        }
+        return null;
+    }
 }
