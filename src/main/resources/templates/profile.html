@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Hotel — Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}"/>
+    <style>
+        .profile-layout {
+            display: flex;
+            gap: 24px;
+            max-width: 1000px;
+            margin: 32px auto;
+            padding: 0 24px;
+            align-items: flex-start;
+        }
+
+        /* LEFT — User Card */
+        .profile-card {
+            width: 280px;
+            min-width: 280px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px #0000000a;
+        }
+        .profile-banner {
+            height: 80px;
+            background: linear-gradient(135deg, #073f72, #0a5ca8);
+        }
+        .profile-avatar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px 20px;
+            margin-top: -30px;
+        }
+        .profile-avatar {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 2px 8px #00000020;
+        }
+        .profile-name {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            margin-top: 10px;
+        }
+        .profile-role {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .profile-info {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text);
+        }
+        .info-icon { font-size: 16px; }
+        .info-label { color: var(--text-muted); font-size: 11px; }
+
+        /* RIGHT — Reservations */
+        .profile-right { flex: 1; }
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        /* RESERVATION CARD */
+        .res-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px #0000000a;
+            transition: all 0.2s;
+        }
+        .res-card:hover {
+            border-color: #073f72;
+            box-shadow: 0 4px 12px #073f7215;
+        }
+        .res-room-num {
+            font-size: 15px;
+            font-weight: 800;
+            color: #073f72;
+        }
+        .res-dates {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .res-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            text-align: right;
+        }
+        .res-price-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        /* FOOTER */
+footer.footer {
+    background: #073f72;
+    color: #ffffffaa;
+    padding: 20px 32px;
+    border-top: 1px solid #052d52;
+    flex-shrink: 0;  /* ← مهم */
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.footer-brand { font-size: 16px; font-weight: 800; color: #fff; }
+.footer-text  { font-size: 12px; color: #ffffffaa; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+    color: #ffffffaa;
+    text-decoration: none;
+    font-size: 12px;
+}
+.footer-links a:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">Smart Hotel</a>
+    <div class="nav-links">
+        <a href="/rooms">Rooms</a>
+        <a href="/reservations">Reservations</a>
+        <a href="/profile" class="active"
+           th:text="'👤 ' + ${loggedUser.fullName}">Profile</a>
+        <a href="/logout">Log out</a>
+    </div>
+</nav>
+
+<div class="profile-layout">
+
+    <!-- LEFT — Profile Card -->
+    <div class="profile-card">
+        <div class="profile-banner"></div>
+        <div class="profile-avatar-wrap">
+            <div class="profile-avatar">👤</div>
+            <div class="profile-name"
+                 th:text="${loggedUser.fullName}"></div>
+            <div class="profile-role"
+                 th:text="${loggedUser.role}"></div>
+        </div>
+        <div class="profile-info">
+            <div class="info-item">
+                <span class="info-icon">📧</span>
+                <div>
+                    <div class="info-label">Email</div>
+                    <div th:text="${loggedUser.email}"></div>
+                </div>
+            </div>
+            <div class="info-item">
+                <span class="info-icon">📱</span>
+                <div>
+                    <div class="info-label">Phone</div>
+                    <div th:text="${loggedUser.phone != null ?
+                                   loggedUser.phone : 'N/A'}">
+                    </div>
+                </div>
+            </div>
+            <div class="info-item">
+                <span class="info-icon"> </span>
+                <div>
+                    <div class="info-label">Total Reservations</div>
+                    <div th:text="${myReservations.size()}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT — My Reservations -->
+    <div class="profile-right">
+        <div class="section-title">My Reservations</div>
+
+        <div th:each="res : ${myReservations}">
+            <div class="res-card">
+                <div>
+                    <div class="res-room-num"
+                         th:text="'Room ' + ${res.room.roomNumber}">
+                    </div>
+                    <div class="res-dates"
+                         th:text="${res.checkInDate} + ' → ' + ${res.checkOutDate}">
+                    </div>
+                    <div style="margin-top:6px;">
+                        <div th:switch="${res.status.name()}">
+                            <span class="badge badge-confirmed"
+                                  th:case="'CONFIRMED'">Confirmed</span>
+                            <span class="badge badge-checkedin"
+                                  th:case="'CHECKED_IN'">Checked In</span>
+                            <span class="badge badge-checkedout"
+                                  th:case="'CHECKED_OUT'">Checked Out</span>
+                            <span class="badge badge-cancelled"
+                                  th:case="'CANCELLED'">Cancelled</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="res-price"
+                         th:text="${res.totalPrice != null ?
+                                   res.totalPrice + ' MAD' : 'N/A'}">
+                    </div>
+                    <div class="res-price-label">Total Price</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty -->
+        <div class="empty-state"
+             th:if="${#lists.isEmpty(myReservations)}">
+            <div class="empty-state-icon">📋</div>
+            <div>No reservations yet</div>
+            <a href="/rooms" class="btn btn-primary"
+               style="margin-top:12px;">
+                Book a Room
+            </a>
+        </div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand"> Smart Hotel</div>
+        <div class="footer-text">
+            © 2026 Smart Hotel System · Agadir, Morocco
+        </div>
+        <div class="footer-links">
+            <a href="/rooms">Rooms</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/profile">Profile</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

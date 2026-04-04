@@ -35,11 +35,27 @@ public class IoTDeviceService {
                 .orElseThrow(() ->
                         new RuntimeException("Device not found"));
         if (!device.getIsOnline()) {
-            throw new RuntimeException("Device offline!");
+            throw new RuntimeException("Device hors ligne!");
         }
+
+         switch (command) {
+            case "UNLOCK"       -> device.setStatus("UNLOCKED");
+            case "LOCK"         -> device.setStatus("LOCKED");
+            case "LIGHTS_ON"    -> device.setStatus("ON");
+            case "LIGHTS_OFF"   -> device.setStatus("OFF");
+            case "AC_ON"        -> device.setStatus("ON");
+            case "AC_OFF"       -> device.setStatus("OFF");
+            case "TV_ON"        -> device.setStatus("ON");
+            case "TV_OFF"       -> device.setStatus("OFF");
+            case "CURTAIN_OPEN" -> device.setStatus("OPEN");
+            case "CURTAIN_CLOSE"-> device.setStatus("CLOSED");
+            default             -> device.setStatus(command); // thermostat
+        }
+
         device.sendCommand(command);
         return iotDeviceRepository.save(device);
     }
+
     public List<IoTDevice> getAllDevices() {
         return iotDeviceRepository.findAll();
     }

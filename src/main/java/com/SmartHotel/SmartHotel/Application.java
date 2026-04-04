@@ -32,7 +32,7 @@ public class Application {
         return args -> {
             if (roomService.getAllRooms().isEmpty()) {
 
-                // ✅ Room
+                // Room
                 Room r101 = Room.builder()
                         .roomNumber("101")
                         .floor(1)
@@ -97,6 +97,34 @@ public class Application {
                         .isOnline(true)
                         .build();
                 deviceService.saveDevice(tempSensor);
+
+
+                IoTDevice door = IoTDevice.builder()
+                        .deviceUid("DOOR-RM101-01")
+                        .room(r101)
+                        .deviceType(DeviceType.DOOR_LOCK)
+                        .status("LOCKED")
+                        .isOnline(true)
+                        .build();
+                deviceService.saveDevice(door);
+
+                IoTDevice light = IoTDevice.builder()
+                        .deviceUid("LIGHT-RM101-01")
+                        .room(r101)
+                        .deviceType(DeviceType.LIGHT)
+                        .status("OFF")
+                        .isOnline(true)
+                        .build();
+                deviceService.saveDevice(light);
+
+                IoTDevice ac = IoTDevice.builder()
+                        .deviceUid("AC-RM101-01")
+                        .room(r101)
+                        .deviceType(DeviceType.AC)
+                        .status("OFF")
+                        .isOnline(true)
+                        .build();
+                deviceService.saveDevice(ac);
 
                 System.out.println("### SmartHotel Initialized! ###");
 

@@ -1,8 +1,10 @@
 package com.SmartHotel.SmartHotel.Controllers.ViewControllers;
 
 import com.SmartHotel.SmartHotel.Enteties.Room;
+import com.SmartHotel.SmartHotel.Enteties.User;
 import com.SmartHotel.SmartHotel.Enums.RoomStatus;
 import com.SmartHotel.SmartHotel.services.RoomService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +19,14 @@ public class RoomViewController {
     RoomService roomService;
 
     @GetMapping("/rooms")
-    public String roomsPage(Model model) {
+    public String roomsPage(HttpSession session,Model model) {
         List<Room> rooms = roomService.getAllRooms();
+
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("loggedUser", loggedUser);
 
         model.addAttribute("rooms", rooms);
 
-        // Stats لـ left panel
         model.addAttribute("totalCount", rooms.size());
         model.addAttribute("availableCount",
                 rooms.stream()

@@ -2,9 +2,11 @@ package com.SmartHotel.SmartHotel.Controllers.ViewControllers;
 
 import com.SmartHotel.SmartHotel.Enteties.Reservation;
 import com.SmartHotel.SmartHotel.Enteties.Room;
+import com.SmartHotel.SmartHotel.Enteties.User;
 import com.SmartHotel.SmartHotel.Enums.ReservStatus;
 import com.SmartHotel.SmartHotel.services.ReservationService;
 import com.SmartHotel.SmartHotel.services.RoomService;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -42,29 +44,31 @@ public class ReservationViewController {
             @RequestParam Long roomId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            HttpSession session,
             Model model) {
 
         try {
             Room room = roomService.getRoomById(roomId);
 
-            // Logic بسيط: واش التاريخ منطقي؟
             if (checkOutDate.isBefore(checkInDate)) {
                 model.addAttribute("error", "Check-out date must be after check-in!");
                 model.addAttribute("room", room);
                 return "reservation";
             }
 
-            Reservation reservation = Reservation.builder() // استعملي Builder أحسن
+
+            User loggedUser = (User) session.getAttribute("loggedUser");
+
+            Reservation reservation = Reservation.builder()
                     .room(room)
+                    .guest(loggedUser)
                     .checkInDate(checkInDate)
                     .checkOutDate(checkOutDate)
                     .status(ReservStatus.CONFIRMED)
                     .build();
 
             reservationService.createReservation(reservation);
-
-            // مورا ما تسالي، رجعي للـ Dashboard وبيني ميساج ديال النجاح
-            return "redirect:/dashboard?success=true";
+            return "redirect:/reservations";
 
         } catch (Exception e) {
             model.addAttribute("error", "System error: " + e.getMessage());

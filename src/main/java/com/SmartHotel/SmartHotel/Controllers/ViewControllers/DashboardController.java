@@ -2,8 +2,10 @@ package com.SmartHotel.SmartHotel.Controllers.ViewControllers;
 
 import com.SmartHotel.SmartHotel.Enteties.Reservation;
 import com.SmartHotel.SmartHotel.Enteties.Room;
+import com.SmartHotel.SmartHotel.Enteties.User;
 import com.SmartHotel.SmartHotel.Enums.ReservStatus;
 import com.SmartHotel.SmartHotel.Enums.RoomStatus;
+import com.SmartHotel.SmartHotel.Enums.RoomType;
 import com.SmartHotel.SmartHotel.services.IoTDeviceService;
 import com.SmartHotel.SmartHotel.services.ReservationService;
 import com.SmartHotel.SmartHotel.services.RoomService;
@@ -12,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +35,8 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model,
                             HttpSession session) {
-
+        User loggedUser = (User) session.getAttribute("loggedUser");
+        model.addAttribute("loggedUser", loggedUser);
          List<Room> rooms = roomService.getAllRooms();
         model.addAttribute("totalRooms", rooms.size());
         model.addAttribute("availableRooms",
@@ -88,6 +93,30 @@ public class DashboardController {
         }
 
         return "dashboard";
+    }
+    @PostMapping("/manager/rooms/add")
+    public String addRoom(
+            @RequestParam String roomNumber,
+            @RequestParam Integer floor,
+            @RequestParam RoomType type,
+            @RequestParam Double basePrice,
+            @RequestParam(required = false) Double rating,
+            @RequestParam Boolean hasIot,
+            @RequestParam(required = false) String imageUrl) {
+
+        Room room = Room.builder()
+                .roomNumber(roomNumber)
+                .floor(floor)
+                .type(type)
+                .status(RoomStatus.AVAILABLE)
+                .basePrice(basePrice)
+                .rating(rating)
+                .hasIot(hasIot)
+                .imageUrl(imageUrl)
+                .build();
+
+        roomService.createRoom(room);
+        return "redirect:/dashboard";
     }
 
 }

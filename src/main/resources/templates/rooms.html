@@ -122,15 +122,54 @@
           margin-left:50px;
         }
 
+        /* FOOTER */
+footer.footer {
+    background: #073f72;
+    color: #ffffffaa;
+    padding: 20px 32px;
+    border-top: 1px solid #052d52;
+    flex-shrink: 0;  /* ← مهم */
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.footer-brand { font-size: 16px; font-weight: 800; color: #fff; }
+.footer-text  { font-size: 12px; color: #ffffffaa; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+    color: #ffffffaa;
+    text-decoration: none;
+    font-size: 12px;
+}
+.footer-links a:hover { color: #fff; }
     </style>
 </head>
 <body>
 <!-- NAVBAR -->
 <nav class="navbar">
-    <a href="/" class="navbar-brand">🏨 Smart Hotel</a>
+    <a href="/" class="navbar-brand"> Smart Hotel</a>
     <div class="nav-links">
-        <a href="/rooms" class="active">Rooms</a>
+        <!-- كلهم كيشوفو Rooms -->
+        <a href="/rooms">Rooms</a>
         <a href="/reservations">Reservations</a>
+
+        <!-- غير Manager كيشوف Dashboard -->
+        <a href="/dashboard"
+           th:if="${loggedUser != null &&
+                   loggedUser.role.name() == 'MANAGER'}">
+            Dashboard
+        </a>
+
+        <!-- اسم المستخدم -->
+        <a href="/profile"
+           th:if="${loggedUser != null}"
+           th:text="'👤 ' + ${loggedUser.fullName}">
+        </a>
+
         <a href="/logout">Log out</a>
     </div>
 </nav>
@@ -140,7 +179,7 @@
     <!-- LEFT PANEL -->
     <div class="left-panel">
         <div>
-            <div class="left-title">🏨 Our Rooms</div>
+            <div class="left-title">Our Rooms</div>
             <div class="left-desc" style="margin-top:8px;">
                 Discover our comfortable rooms designed
                 for a perfect stay in Agadir.
@@ -311,6 +350,21 @@
 
     </div>
 </div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand"> Smart Hotel</div>
+        <div class="footer-text">
+            © 2026 Smart Hotel System · Agadir, Morocco
+        </div>
+        <div class="footer-links">
+            <a href="/rooms">Rooms</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/profile">Profile</a>
+        </div>
+    </div>
+</footer>
 
 <script>
     // نجوم

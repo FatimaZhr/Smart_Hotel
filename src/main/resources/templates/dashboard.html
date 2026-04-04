@@ -6,16 +6,56 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/global.css}"/>
     <link rel="stylesheet" th:href="@{/css/dashboard.css}"/>
+    <style>
+        /* FOOTER */
+footer.footer {
+    background: #073f72;
+    color: #ffffffaa;
+    padding: 20px 32px;
+    border-top: 1px solid #052d52;
+    flex-shrink: 0;  /* ← مهم */
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.footer-brand { font-size: 16px; font-weight: 800; color: #fff; }
+.footer-text  { font-size: 12px; color: #ffffffaa; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+    color: #ffffffaa;
+    text-decoration: none;
+    font-size: 12px;
+}
+.footer-links a:hover { color: #fff; }
+    </style>
 </head>
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
-    <a href="/" class="navbar-brand">🏨 Smart Hotel</a>
+    <a href="/" class="navbar-brand"> Smart Hotel</a>
     <div class="nav-links">
+
         <a href="/rooms">Rooms</a>
         <a href="/reservations">Reservations</a>
-        <a href="/dashboard" class="active">Dashboard</a>
+
+
+        <a href="/dashboard"
+           th:if="${loggedUser != null &&
+                   loggedUser.role.name() == 'MANAGER'}">
+            Dashboard
+        </a>
+
+
+        <a href="/profile"
+           th:if="${loggedUser != null}"
+           th:text="'👤 ' + ${loggedUser.fullName}">
+        </a>
+
         <a href="/logout">Log out</a>
     </div>
 </nav>
@@ -25,9 +65,12 @@
     <!-- HEADER -->
     <div class="dash-header">
         <div>
-            <div class="page-title">📊 Manager Dashboard</div>
+            <div class="page-title">Manager Dashboard</div>
             <div class="dash-subtitle">Welcome back — Smart Hotel Agadir</div>
         </div>
+        <button onclick="openModal()" class="btn btn-primary">
+            ➕ Add Room
+        </button>
     </div>
 
     <!-- STATS GRID -->
@@ -94,7 +137,7 @@
     <!-- REVENUE BANNER -->
     <div class="revenue-banner">
         <div class="revenue-left">
-            <div class="revenue-label">💰 Total Revenue</div>
+            <div class="revenue-label">Total Revenue</div>
             <div class="revenue-value"
                  th:text="${totalRevenue} + ' MAD'">0 MAD</div>
             <div class="revenue-sub">From checked-out reservations</div>
@@ -113,7 +156,7 @@
         <!-- RECENT RESERVATIONS -->
         <div class="table-container">
             <div class="table-header">
-                <div class="table-title">📋 Recent Reservations</div>
+                <div class="table-title"> Recent Reservations</div>
                 <a href="/reservations" class="btn btn-secondary"
                    style="font-size:12px; padding:6px 14px;">
                     View All
@@ -157,7 +200,7 @@
             <!-- Empty -->
             <div class="empty-state"
                  th:if="${#lists.isEmpty(recentReservations)}">
-                <div class="empty-state-icon">📋</div>
+                <div class="empty-state-icon"></div>
                 <div>No reservations yet</div>
             </div>
         </div>
@@ -165,7 +208,7 @@
         <!-- ROOMS STATUS -->
         <div class="rooms-status">
             <div class="table-header">
-                <div class="table-title">🛏️ Rooms Status</div>
+                <div class="table-title">🛏Rooms Status</div>
                 <a href="/rooms" class="btn btn-secondary"
                    style="font-size:12px; padding:6px 14px;">
                     Manage
@@ -199,5 +242,120 @@
 
     </div>
 </div>
+
+<!-- ADD ROOM MODAL -->
+<div class="modal-overlay" id="addRoomModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">➕ Add New Room</div>
+            <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <form th:action="@{/manager/rooms/add}" method="post">
+
+            <div class="modal-body">
+                <!-- Room Number -->
+                <div class="form-group">
+                    <label class="form-label">Room Number</label>
+                    <input type="text" name="roomNumber"
+                           class="form-input" placeholder="ex: 104"
+                           required/>
+                </div>
+
+                <!-- Floor -->
+                <div class="form-group">
+                    <label class="form-label">Floor</label>
+                    <input type="number" name="floor"
+                           class="form-input" placeholder="ex: 1"
+                           required/>
+                </div>
+
+                <!-- Type -->
+                <div class="form-group">
+                    <label class="form-label">Room Type</label>
+                    <select name="type" class="form-input">
+                        <option value="SINGLE">Single</option>
+                        <option value="DOUBLE">Double</option>
+                        <option value="SUITE">Suite</option>
+                        <option value="FAMILY">Family</option>
+                    </select>
+                </div>
+
+                <!-- Price -->
+                <div class="form-group">
+                    <label class="form-label">Price / night (MAD)</label>
+                    <input type="number" name="basePrice"
+                           class="form-input" placeholder="ex: 800"
+                           required/>
+                </div>
+
+                <!-- Rating -->
+                <div class="form-group">
+                    <label class="form-label">Rating (1-5)</label>
+                    <input type="number" name="rating"
+                           class="form-input"
+                           min="1" max="5" step="0.1"
+                           placeholder="ex: 4.5"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image</label>
+                    <select name="imageUrl" class="form-input">
+                        <option value="/images/single1.jfif">Single Room</option>
+                        <option value="/images/double1.jfif">Double Room</option>
+                        <option value="/images/suite1.jfif">Suite Room</option>
+                        <option value="/images/family1.jfif">Family Room</option>
+                    </select>
+                </div>
+
+                <!-- IoT -->
+                <div class="form-group">
+                    <label class="form-label">Has IoT Devices?</label>
+                    <select name="hasIot" class="form-input">
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        onclick="closeModal()"
+                        class="btn btn-secondary">Cancel</button>
+                <button type="submit"
+                        class="btn btn-primary">Add Room ✓</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand"> Smart Hotel</div>
+        <div class="footer-text">
+            © 2026 Smart Hotel System · Agadir, Morocco
+        </div>
+        <div class="footer-links">
+            <a href="/rooms">Rooms</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/profile">Profile</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    function openModal() {
+        document.getElementById('addRoomModal').classList.add('active');
+    }
+    function closeModal() {
+        document.getElementById('addRoomModal').classList.remove('active');
+    }
+    // Close on overlay click
+    document.getElementById('addRoomModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+</script>
+
 </body>
 </html>

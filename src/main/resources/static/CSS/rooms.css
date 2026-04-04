@@ -18,7 +18,7 @@ body { background: #e6ebe8; color: #e6edf3; font-family: 'Segoe UI', sans-serif;
 /* LAYOUT */
 .main-layout {
     display: flex;
-    height: calc(100vh - 57px);
+    min-height: calc(100vh - 57px - 65px); /* ← طرح height الـ footer */
 }
 
 /* LEFT PANEL */

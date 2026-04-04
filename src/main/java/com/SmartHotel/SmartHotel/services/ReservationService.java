@@ -2,6 +2,7 @@ package com.SmartHotel.SmartHotel.services;
 
 import com.SmartHotel.SmartHotel.Enteties.Reservation;
 import com.SmartHotel.SmartHotel.Enteties.Room;
+import com.SmartHotel.SmartHotel.Enteties.User;
 import com.SmartHotel.SmartHotel.Enums.ReservStatus;
 import com.SmartHotel.SmartHotel.Enums.RoomStatus;
 import com.SmartHotel.SmartHotel.Repositories.ReservationRepository;
@@ -11,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -30,6 +32,17 @@ public class ReservationService {
         if (!room.isAvailable()) {
             throw new RuntimeException("Room is not available!");
         }
+
+        room.setStatus(RoomStatus.OCCUPIED);
+        roomRepository.save(room);
+        long nights = ChronoUnit.DAYS.between(
+                reservation.getCheckInDate(),
+                reservation.getCheckOutDate()
+        );
+        if (nights <= 0) {
+            throw new RuntimeException("Invalid dates!");
+        }
+        reservation.setTotalPrice(room.getBasePrice() * nights);
 
         room.setStatus(RoomStatus.OCCUPIED);
         roomRepository.save(room);
@@ -87,4 +100,11 @@ public class ReservationService {
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
     }
+
+    public List<Reservation> getReservationsByGuest(User loggedUser) {
+        return  reservationRepository.findByGuest(loggedUser);
+    }
+
+
+
 }

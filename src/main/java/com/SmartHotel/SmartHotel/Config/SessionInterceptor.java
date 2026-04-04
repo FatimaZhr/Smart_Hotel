@@ -1,5 +1,7 @@
 package com.SmartHotel.SmartHotel.Config;
 
+import com.SmartHotel.SmartHotel.Enteties.User;
+import com.SmartHotel.SmartHotel.Enums.Role;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
          String path = request.getRequestURI();
         if (path.equals("/login") ||
+                path.equals("/register") ||
                 path.equals("/logout") ||
                 path.startsWith("/css") ||
                 path.startsWith("/images")) {
@@ -22,13 +25,20 @@ public class SessionInterceptor implements HandlerInterceptor {
         }
 
         // واش المستخدم logged in؟
-        Object user = request.getSession()
+        User user = (User) request.getSession()
                 .getAttribute("loggedUser");
         if (user == null) {
-             response.sendRedirect("/login");
+            response.sendRedirect("/login");
             return false;
         }
 
+        if (path.startsWith("/dashboard") &&
+                user.getRole() != Role.MANAGER) {
+            response.sendRedirect("/rooms");
+            return false;
+        }
         return true;
     }
+
+
 }
