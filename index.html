@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Room Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+    }
+
+    h1 { margin: 20px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 20px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      margin: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .on { background: green; color: white; }
+    .off { background: red; color: white; }
+
+    canvas {
+      background: white;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Smart Room Dashboard</h1>
+
+<div class="grid">
+  <div class="card">💡 Luminosité<br><span id="ldr">0</span></div>
+  <div class="card">🌡 Température<br><span id="temp">0</span> °C</div>
+  <div class="card">🚶 Mouvement<br><span id="motion">Non</span></div>
+  <div class="card">🔆 LED<br><span id="led">0</span></div>
+</div>
+
+<h2>🎛️ Contrôle LED</h2>
+<button class="on" onclick="setLED(3000)">ON</button>
+<button class="off" onclick="setLED(0)">OFF</button>
+
+<h2>📊 Graphiques temps réel</h2>
+<canvas id="chart" width="600" height="250"></canvas>
+
+<script>
+let chartData = {
+  labels: [],
+  datasets: [
+    {
+      label: "Température",
+      data: [],
+      borderWidth: 2
+    },
+    {
+      label: "Luminosité",
+      data: [],
+      borderWidth: 2
+    }
+  ]
+};
+
+let chart = new Chart(document.getElementById("chart"), {
+  type: "line",
+  data: chartData,
+  options: {
+    responsive: true,
+    animation: false
+  }
+});
+
+// 🔥 Simulation ESP32
+setInterval(() => {
+  fetch("/data", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      ldr: Math.floor(Math.random()*4000),
+      temp: (20 + Math.random()*10).toFixed(1),
+      motion: Math.random() > 0.5 ? 1 : 0,
+      brightness: Math.floor(Math.random()*4000)
+    })
+  });
+}, 2000);
+
+// 🔄 Mise à jour dashboard
+setInterval(() => {
+  fetch("/data")
+    .then(res => res.json())
+    .then(data => {
+
+      document.getElementById("ldr").innerText = data.ldr;
+      document.getElementById("temp").innerText = data.temp;
+      document.getElementById("motion").innerText = data.motion ? "Oui" : "Non";
+      document.getElementById("led").innerText = data.brightness;
+
+      // update chart
+      let time = new Date().toLocaleTimeString();
+
+      chartData.labels.push(time);
+      chartData.datasets[0].data.push(data.temp);
+      chartData.datasets[1].data.push(data.ldr);
+
+      if (chartData.labels.length > 10) {
+        chartData.labels.shift();
+        chartData.datasets[0].data.shift();
+        chartData.datasets[1].data.shift();
+      }
+
+      chart.update();
+    });
+}, 1000);
+
+// 🎛️ contrôle LED
+function setLED(value) {
+  fetch("/control", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ brightness: value })
+  });
+}
+
+</script>
+
+</body>
+</html>
