@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Hotel — IoT Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/global.css}"/>
+    <link rel="stylesheet" th:href="@{/css/iot.css}"/>
+    <style>
+        /* FOOTER */
+footer.footer {
+    background: #073f72;
+    color: #ffffffaa;
+    padding: 20px 32px;
+    border-top: 1px solid #052d52;
+    flex-shrink: 0;
+}
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.footer-brand { font-size: 16px; font-weight: 800; color: #fff; }
+.footer-text  { font-size: 12px; color: #ffffffaa; }
+.footer-links { display: flex; gap: 20px; }
+.footer-links a {
+    color: #ffffffaa;
+    text-decoration: none;
+    font-size: 12px;
+}
+.footer-links a:hover { color: #fff; }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="/" class="navbar-brand">Smart Hotel</a>
+    <div class="nav-links">
+        <!-- كلهم كيشوفو Rooms -->
+        <a href="/rooms">Rooms</a>
+        <a href="/reservations">Reservations</a>
+
+        <!-- غير Manager كيشوف Dashboard -->
+        <a href="/dashboard"
+           th:if="${loggedUser != null &&
+                   loggedUser.role.name() == 'MANAGER'}">
+            Dashboard
+        </a>
+
+        <!-- اسم المستخدم -->
+        <a href="/profile"
+           th:if="${loggedUser != null}"
+           th:text="'👤 ' + ${loggedUser.fullName}">
+        </a>
+
+        <a href="/logout">Log out</a>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <!-- PAGE HEADER -->
+    <div class="iot-header">
+        <div>
+            <div class="page-title">
+                ⚙️ Smart Room Control
+            </div>
+            <div class="iot-subtitle"
+                 th:text="'Room ' + ${room.roomNumber} + ' — Floor ' + ${room.floor}">
+            </div>
+        </div>
+        <a href="/rooms" class="btn btn-secondary">← Back to Rooms</a>
+    </div>
+
+    <!-- DEVICES GRID -->
+    <div class="devices-grid">
+        <div th:each="device : ${devices}">
+            <div class="device-card"
+                 th:classappend="${device.isOnline} ? 'online' : 'offline'">
+
+                <!-- DEVICE HEADER -->
+                <div class="device-header">
+                    <div class="device-icon"
+                         th:switch="${device.deviceType.name()}">
+                        <span th:case="'DOOR_LOCK'">🔒</span>
+                        <span th:case="'THERMOSTAT'">🌡️</span>
+                        <span th:case="'LIGHT'">💡</span>
+                        <span th:case="'AC'">❄️</span>
+                        <span th:case="'TV'">📺</span>
+                        <span th:case="'CURTAIN'">🪟</span>
+                        <span th:case="*">⚙️</span>
+                    </div>
+                    <div>
+                        <div class="device-name"
+                             th:text="${device.deviceType}"></div>
+                        <div class="device-uid"
+                             th:text="'ID: ' + ${device.deviceUid}"></div>
+                    </div>
+                    <!-- Online/Offline badge -->
+                    <div class="device-status-badge">
+                        <span class="badge-online"
+                              th:if="${device.isOnline}">● Online</span>
+                        <span class="badge-offline"
+                              th:if="${!device.isOnline}">● Offline</span>
+                    </div>
+                </div>
+
+                <!-- CURRENT STATUS -->
+                <div class="device-current-status">
+                    <span class="status-label">Current Status</span>
+                    <span class="status-value"
+                          th:text="${device.status}"></span>
+                </div>
+
+                <!-- LAST COMMAND -->
+                <div class="last-command"
+                     th:if="${device.lastCommand != null}">
+                    <span class="last-cmd-label">Last Command</span>
+                    <span class="last-cmd-value"
+                          th:text="${device.lastCommand}"></span>
+                    <span class="last-cmd-time"
+                          th:text="${device.lastCommandAt}"></span>
+                </div>
+
+                <!-- COMMANDS -->
+                <div class="commands-section"
+                     th:if="${device.isOnline}">
+
+                    <!-- DOOR LOCK -->
+                    <div th:if="${device.deviceType.name() == 'DOOR_LOCK'}"
+                         class="cmd-buttons">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="UNLOCK"/>
+                            <button class="cmd-btn cmd-success">🔓 Unlock</button>
+                        </form>
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="LOCK"/>
+                            <button class="cmd-btn cmd-danger">🔒 Lock</button>
+                        </form>
+                    </div>
+
+                    <!-- LIGHT -->
+                    <div th:if="${device.deviceType.name() == 'LIGHT'}"
+                         class="cmd-buttons">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="LIGHTS_ON"/>
+                            <button class="cmd-btn cmd-warning">💡 ON</button>
+                        </form>
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="LIGHTS_OFF"/>
+                            <button class="cmd-btn cmd-secondary">💡 OFF</button>
+                        </form>
+                    </div>
+
+                    <!-- AC -->
+                    <div th:if="${device.deviceType.name() == 'AC'}"
+                         class="cmd-buttons">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="AC_ON"/>
+                            <button class="cmd-btn cmd-success">❄️ ON</button>
+                        </form>
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="AC_OFF"/>
+                            <button class="cmd-btn cmd-danger">❄️ OFF</button>
+                        </form>
+                    </div>
+
+                    <!-- THERMOSTAT -->
+                    <div th:if="${device.deviceType.name() == 'THERMOSTAT'}"
+                         class="cmd-temp">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post"
+                              style="display:flex; gap:8px; align-items:center;">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <span style="font-size:13px; color:var(--text-muted);">Set Temp:</span>
+                            <input type="number" name="command"
+                                   min="16" max="30" value="22"
+                                   class="temp-input"
+                                   placeholder="°C"/>
+                            <button class="cmd-btn cmd-warning">Set 🌡️</button>
+                        </form>
+                    </div>
+
+                    <!-- TV -->
+                    <div th:if="${device.deviceType.name() == 'TV'}"
+                         class="cmd-buttons">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="TV_ON"/>
+                            <button class="cmd-btn cmd-success">📺 ON</button>
+                        </form>
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="TV_OFF"/>
+                            <button class="cmd-btn cmd-danger">📺 OFF</button>
+                        </form>
+                    </div>
+
+                    <!-- CURTAIN -->
+                    <div th:if="${device.deviceType.name() == 'CURTAIN'}"
+                         class="cmd-buttons">
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="CURTAIN_OPEN"/>
+                            <button class="cmd-btn cmd-success">🪟 Open</button>
+                        </form>
+                        <form th:action="@{/iot/devices/{id}/command(id=${device.id})}"
+                              method="post">
+                            <input type="hidden" name="roomId" th:value="${room.id}"/>
+                            <input type="hidden" name="command" value="CURTAIN_CLOSE"/>
+                            <button class="cmd-btn cmd-secondary">🪟 Close</button>
+                        </form>
+                    </div>
+
+                </div>
+
+                <!-- OFFLINE MESSAGE -->
+                <div class="offline-msg"
+                     th:if="${!device.isOnline}">
+                    ⚠️ Device is offline
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- EMPTY -->
+    <div class="empty-state"
+         th:if="${#lists.isEmpty(devices)}">
+        <div class="empty-state-icon">⚙️</div>
+        <div>No IoT devices found for this room</div>
+    </div>
+
+</div>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand"> Smart Hotel</div>
+        <div class="footer-text">
+            © 2026 Smart Hotel System · Agadir, Morocco
+        </div>
+        <div class="footer-links">
+            <a href="/rooms">Rooms</a>
+            <a href="/reservations">Reservations</a>
+            <a href="/profile">Profile</a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

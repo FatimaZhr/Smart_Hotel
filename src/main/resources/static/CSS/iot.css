@@ -1,0 +1,192 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* HEADER */
+.iot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+.iot-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* DEVICES GRID */
+.devices-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* DEVICE CARD */
+.device-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 1px 4px #0000000a;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.device-card.online {
+    border-left: 4px solid var(--success);
+}
+.device-card.offline {
+    border-left: 4px solid #e2e8f0;
+    opacity: 0.7;
+}
+.device-card:hover {
+    box-shadow: 0 4px 12px #00000015;
+}
+
+/* DEVICE HEADER */
+.device-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.device-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+.device-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+}
+.device-uid {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+.device-status-badge {
+    margin-left: auto;
+}
+.badge-online {
+    background: var(--success-light);
+    color: var(--success);
+    border: 1px solid #bbf7d0;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.badge-offline {
+    background: #f1f5f9;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* CURRENT STATUS */
+.device-current-status {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+.status-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.status-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+/* LAST COMMAND */
+.last-command {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 14px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+}
+.last-cmd-label {
+    font-size: 10px;
+    color: #92400e;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+.last-cmd-value {
+    font-size: 13px;
+    font-weight: 700;
+    color: #78350f;
+}
+.last-cmd-time {
+    font-size: 10px;
+    color: #a16207;
+}
+
+/* COMMANDS */
+.commands-section { margin-top: 4px; }
+.cmd-buttons {
+    display: flex;
+    gap: 8px;
+}
+.cmd-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+.cmd-success  { background: var(--success-light); color: var(--success); border-color: #bbf7d0; }
+.cmd-success:hover  { background: #dcfce7; }
+.cmd-danger   { background: var(--danger-light);  color: var(--danger);  border-color: #fecaca; }
+.cmd-danger:hover   { background: #fee2e2; }
+.cmd-warning  { background: #fffbeb; color: #92400e; border-color: #fde68a; }
+.cmd-warning:hover  { background: #fef3c7; }
+.cmd-secondary{ background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+.cmd-secondary:hover{ background: #e2e8f0; }
+
+/* THERMOSTAT */
+.cmd-temp { display: flex; }
+.temp-input {
+    width: 70px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    text-align: center;
+    outline: none;
+}
+.temp-input:focus { border-color: #073f72; }
+
+/* OFFLINE MSG */
+.offline-msg {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 13px;
+    padding: 10px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px dashed #e2e8f0;
+}
